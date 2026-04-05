@@ -13,9 +13,15 @@ function Login() {
     if (!email.trim() || !password.trim()) return setError("Please fill in all fields.");
     setLoading(true);
     try {
-      const { data } = await API.post("/auth/login", { email, password });
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user || {}));
+  const { data } = await API.post("/auth/login", { email, password });
+    const userData = {
+      _id: data.user.id,
+      email: data.user.email,
+      role: data.user.role,
+      token: data.token,
+    };
+
+    localStorage.setItem("user", JSON.stringify(userData));
       const role = data.user?.role;
       if (role === "admin")        window.location.href = "/admin-dashboard";
       else if (role === "analyst") window.location.href = "/analyst-dashboard";
@@ -25,6 +31,9 @@ function Login() {
     } finally { setLoading(false); }
   };
 
+    
+
+    
   return (
     <>
       <style>{`

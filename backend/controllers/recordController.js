@@ -3,19 +3,21 @@ import Record from "../models/Record.js";
 // CREATE RECORD
 export const createRecord = async (req, res) => {
   try {
-    
-    if (!req.body.amount || !req.body.type) {
+    const { userId, ...rest } = req.body;
+
+    if (!rest.amount || !rest.type) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
     const record = await Record.create({
-      ...req.body,
-      user: req.user._id
+      ...rest,
+      user: userId || req.user._id   
     });
 
     res.status(201).json(record);
 
   } catch (error) {
+    console.error("CREATE RECORD ERROR:", error); // 🔥 ADD THIS
     res.status(500).json({
       message: "Server Error",
       error: error.message
